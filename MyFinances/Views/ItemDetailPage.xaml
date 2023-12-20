@@ -5,10 +5,20 @@
              Title="{Binding Title}">
 
     <StackLayout Spacing="20" Padding="15">
-        <Label Text="Text:" FontSize="Medium" />
-        <Label Text="{Binding Text}" FontSize="Small"/>
-        <Label Text="Description:" FontSize="Medium" />
-        <Label Text="{Binding Description}" FontSize="Small"/>
+        <Label Text="Nazwa:" FontSize="Medium" />
+        <Label Text="{Binding Operation.Name}" FontSize="Small"/>
+        
+        <Label Text="Opis:" FontSize="Medium" />
+        <Label Text="{Binding Operation.Description}" FontSize="Small"/>
+
+        <Label Text="Wartość:" FontSize="Medium" />
+        <Label Text="{Binding Operation.Value}" FontSize="Small"/>
+
+        <Label Text="Data utworzenia:" FontSize="Medium" />
+        <Label Text="{Binding Operation.Date, StringFormat='{0:dd-MM-yyyy}'}" FontSize="Small"/>
+
+        <Label Text="Kategoria:" FontSize="Medium" />
+        <Label Text="{Binding Operation.CategoryId}" FontSize="Small"/>
     </StackLayout>
     
 </ContentPage>
