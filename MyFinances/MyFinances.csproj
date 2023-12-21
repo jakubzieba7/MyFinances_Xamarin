@@ -13,10 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\..\..\Tydz11_cw1_MyFinances\MyFinances.Core\MyFinances.Core.csproj" />
   </ItemGroup>
 </Project>

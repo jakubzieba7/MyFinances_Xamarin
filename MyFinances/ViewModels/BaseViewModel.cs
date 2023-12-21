@@ -1,16 +1,19 @@
-﻿using MyFinances.Models;
+﻿using MyFinances.Core.Response;
+using MyFinances.Models;
 using MyFinances.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Xamarin.Forms;
 
 namespace MyFinances.ViewModels
 {
     public class BaseViewModel : INotifyPropertyChanged
     {
-        public IDataStore<Item> DataStore => DependencyService.Get<IDataStore<Item>>();
+        public IOperationService OperationService => DependencyService.Get<IOperationService>();
 
         bool isBusy = false;
         public bool IsBusy
@@ -37,6 +40,11 @@ namespace MyFinances.ViewModels
             onChanged?.Invoke();
             OnPropertyChanged(propertyName);
             return true;
+        }
+
+        protected async Task ShowErrorAlert(Response response)
+        {
+            await Shell.Current.DisplayAlert("Wystąpił Błąd!", string.Join(". ", response.Errors.Select(x => x.Message)), "Ok");
         }
 
         #region INotifyPropertyChanged

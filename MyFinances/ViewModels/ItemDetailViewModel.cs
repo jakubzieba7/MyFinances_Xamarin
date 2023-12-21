@@ -1,6 +1,8 @@
-﻿using MyFinances.Models;
+﻿using MyFinances.Core.Dtos;
 using System;
 using System.Diagnostics;
+using System.Linq;
+using System.Reflection.Emit;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -9,21 +11,17 @@ namespace MyFinances.ViewModels
     [QueryProperty(nameof(ItemId), nameof(ItemId))]
     public class ItemDetailViewModel : BaseViewModel
     {
+        private OperationDto _operation;
         private string itemId;
-        private string text;
-        private string description;
-        public string Id { get; set; }
 
-        public string Text
+        public ItemDetailViewModel()
         {
-            get => text;
-            set => SetProperty(ref text, value);
+            Title = "Podgląd operacji";
         }
-
-        public string Description
+        public OperationDto Operation
         {
-            get => description;
-            set => SetProperty(ref description, value);
+            get => _operation;
+            set => SetProperty(ref _operation, value);
         }
 
         public string ItemId
@@ -35,23 +33,18 @@ namespace MyFinances.ViewModels
             set
             {
                 itemId = value;
-                LoadItemId(value);
+                LoadItemId(int.Parse(value));
             }
         }
 
-        public async void LoadItemId(string itemId)
+        public async void LoadItemId(int itemId)
         {
-            try
-            {
-                var item = await DataStore.GetItemAsync(itemId);
-                Id = item.Id;
-                Text = item.Text;
-                Description = item.Description;
-            }
-            catch (Exception)
-            {
-                Debug.WriteLine("Failed to Load Item");
-            }
+            var response = await OperationService.GetAsync(itemId);
+
+            if (!response.IsSuccess)
+                await ShowErrorAlert(response);
+
+            Operation = response.Data;
         }
     }
 }
