@@ -8,7 +8,7 @@ namespace MyFinances
 {
     public partial class App : Application
     {
-        public static string BackendUrl = "";
+        public static string BackendUrl = "http://10.0.2.2:82/api";
 
         public App()
         {
