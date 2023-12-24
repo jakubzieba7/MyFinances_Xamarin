@@ -14,7 +14,8 @@ namespace MyFinances
         {
             InitializeComponent();
 
-            DependencyService.Register<OperationService>();
+            //DependencyService.Register<OperationService>();
+            DependencyService.Register<OperationSqliteService>();
             MainPage = new AppShell();
         }
 
