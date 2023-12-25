@@ -4,13 +4,13 @@
              x:Class="MyFinances.Views.NewItemPage"
              Shell.PresentationMode="ModalAnimated"
              Title="Nowa operacja"
-             xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core"
+             xmlns:ios="clr-namespace:Xamarin.Forms.PlatformConfiguration.iOSSpecific;assembly=Xamarin.Forms.Core" xmlns:viewmodels="clr-namespace:MyFinances.ViewModels" x:DataType="viewmodels:NewItemViewModel"
              ios:Page.UseSafeArea="true">
     <ContentPage.Content>
         <StackLayout Spacing="3" Padding="15">
             
             <Label Text="Nazwa" FontSize="Medium" />
-            <Entry Text="{Binding Text, Mode=TwoWay}" FontSize="Medium" />
+            <Entry Text="{Binding Name, Mode=TwoWay}" FontSize="Medium" />
             
             <Label Text="Opis" FontSize="Medium" />
             <Editor Text="{Binding Description, Mode=TwoWay}" AutoSize="TextChanges" FontSize="Medium" Margin="0" />
@@ -19,7 +19,7 @@
             <Entry Keyboard="Numeric" Text="{Binding Value, Mode=TwoWay}" FontSize="Medium" />
 
             <Label Text="Data utworzenia" FontSize="Medium" />
-            <DatePicker Format="dd-MM-yyyy" Date="{Binding Date, Mode=TwoWay}" FontSize="Medium" />
+            <DatePicker Format="dd-MM-yyyy" Date="{Binding CreatedDate, Mode=TwoWay}" FontSize="Medium" />
 
             <Label Text="Kategoria" FontSize="Medium" />
             <Picker Title="-- wybierz kategorię --" 
