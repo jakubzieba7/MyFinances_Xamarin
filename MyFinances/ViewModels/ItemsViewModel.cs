@@ -6,11 +6,15 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Xamarin.Forms;
+using static Android.Icu.Util.LocaleData;
 
 namespace MyFinances.ViewModels
 {
     public class ItemsViewModel : BaseViewModel
     {
+        private readonly int _pageNumber = 1;
+        private readonly int _pageSize = 3;
+
         public ObservableCollection<OperationDto> Operations { get; }
         public Command LoadItemsCommand { get; }
         public Command AddItemCommand { get; }
@@ -54,7 +58,7 @@ namespace MyFinances.ViewModels
 
             try
             {
-                var response = await OperationService.GetAsync();
+                var response = await OperationService.GetAsync(_pageNumber, _pageSize);
 
                 if (!response.IsSuccess)
                     await ShowErrorAlert(response);

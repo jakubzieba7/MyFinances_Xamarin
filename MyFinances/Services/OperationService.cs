@@ -61,5 +61,12 @@ namespace MyFinances.Services
 
             return JsonConvert.DeserializeObject<DataResponse<IEnumerable<OperationDto>>>(json);
         }
+
+        public async Task<DataResponse<IEnumerable<OperationDto>>> GetAsync(int pageNumber, int pageSize)
+        {
+            var json = await _httpClient.GetStringAsync($"operation?pageNumber={pageNumber}&pageSize={pageSize}");
+
+            return JsonConvert.DeserializeObject<DataResponse<IEnumerable<OperationDto>>>(json);
+        }
     }
 }

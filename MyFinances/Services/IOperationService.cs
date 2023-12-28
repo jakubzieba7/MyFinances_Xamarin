@@ -12,5 +12,6 @@ namespace MyFinances.Services
         Task<Response> DeleteAsync(int id);
         Task<DataResponse<OperationDto>> GetAsync(int id);
         Task<DataResponse<IEnumerable<OperationDto>>> GetAsync();
+        Task<DataResponse<IEnumerable<OperationDto>>> GetAsync(int pageNumber, int pageSize);
     }
 }

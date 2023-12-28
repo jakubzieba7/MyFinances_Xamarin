@@ -91,6 +91,22 @@ namespace MyFinances.Services
             return response;
         }
 
+        public async Task<DataResponse<IEnumerable<OperationDto>>> GetAsync(int pageNumber, int pageSize)
+        {
+            var response = new DataResponse<IEnumerable<OperationDto>>();
+
+            try
+            {
+                response.Data = (await UnitOfWork.OperationRepository.GetAsync()).ToDtos();
+            }
+            catch (Exception exception)
+            {
+                response.Errors.Add(new Error(exception.Source, exception.Message));
+            }
+
+            return response;
+        }
+
         public async Task<Response> UpdateAsync(OperationDto operation)
         {
             var response = new Response();
