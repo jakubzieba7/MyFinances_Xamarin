@@ -1,4 +1,5 @@
-﻿using MyFinances.Core.Dtos;
+﻿using MyFinances.Core;
+using MyFinances.Core.Dtos;
 using MyFinances.Core.Response;
 using Newtonsoft.Json;
 using System;
@@ -62,9 +63,9 @@ namespace MyFinances.Services
             return JsonConvert.DeserializeObject<DataResponse<IEnumerable<OperationDto>>>(json);
         }
 
-        public async Task<DataResponse<IEnumerable<OperationDto>>> GetAsync(int pageNumber, int pageSize)
+        public async Task<DataResponse<IEnumerable<OperationDto>>> GetAsync(PaginationFilter paginationFilter)
         {
-            var json = await _httpClient.GetStringAsync($"operation?pageNumber={pageNumber}&pageSize={pageSize}");
+            var json = await _httpClient.GetStringAsync($"Operation?PageNumber={paginationFilter.PageNumber}&PageSize={paginationFilter.PageSize}");
 
             return JsonConvert.DeserializeObject<DataResponse<IEnumerable<OperationDto>>>(json);
         }

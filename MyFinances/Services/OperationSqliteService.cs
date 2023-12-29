@@ -1,12 +1,13 @@
 ﻿using MyFinances.Core.Dtos;
 using MyFinances.Core.Response;
-using MyFinances.Models;
+using MyFinances.Core;
 using MyFinances.Models.Converters;
 using MyFinances.Models.Domains;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using MyFinances.Models;
 
 namespace MyFinances.Services
 {
@@ -91,13 +92,13 @@ namespace MyFinances.Services
             return response;
         }
 
-        public async Task<DataResponse<IEnumerable<OperationDto>>> GetAsync(int pageNumber, int pageSize)
+        public async Task<DataResponse<IEnumerable<OperationDto>>> GetAsync(PaginationFilter paginationFilter)
         {
             var response = new DataResponse<IEnumerable<OperationDto>>();
 
             try
             {
-                response.Data = (await UnitOfWork.OperationRepository.GetAsync()).ToDtos();
+                response.Data = (await UnitOfWork.OperationRepository.GetAsync(paginationFilter)).ToDtos();
             }
             catch (Exception exception)
             {

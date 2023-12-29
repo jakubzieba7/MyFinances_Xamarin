@@ -1,4 +1,5 @@
-﻿using MyFinances.Core.Dtos;
+﻿using MyFinances.Core;
+using MyFinances.Core.Dtos;
 using MyFinances.Core.Response;
 using MyFinances.Models.Domains;
 using SQLite;
@@ -32,6 +33,14 @@ namespace MyFinances.Models
         public async Task<Operation> GetAsync(int id)
         {
             return await _context.Table<Operation>().FirstAsync(x => x.Id == id);
+        }
+
+        public async Task<IEnumerable<Operation>> GetAsync(PaginationFilter paginationFilter)
+        {
+            return await _context.Table<Operation>()
+                                 .Skip((paginationFilter.PageNumber - 1) * paginationFilter.PageSize)
+                                 .Take(paginationFilter.PageSize)
+                                 .ToListAsync();
         }
 
         public async Task<IEnumerable<Operation>> GetAsync()

@@ -1,4 +1,5 @@
-﻿using MyFinances.Core.Dtos;
+﻿using MyFinances.Core;
+using MyFinances.Core.Dtos;
 using MyFinances.Core.Response;
 using MyFinances.Views;
 using System;
@@ -12,8 +13,7 @@ namespace MyFinances.ViewModels
 {
     public class ItemsViewModel : BaseViewModel
     {
-        private readonly int _pageNumber = 1;
-        private readonly int _pageSize = 3;
+        PaginationFilter paginationFilter = new PaginationFilter();
 
         public ObservableCollection<OperationDto> Operations { get; }
         public Command LoadItemsCommand { get; }
@@ -58,7 +58,7 @@ namespace MyFinances.ViewModels
 
             try
             {
-                var response = await OperationService.GetAsync(_pageNumber, _pageSize);
+                var response = await OperationService.GetAsync(paginationFilter);
 
                 if (!response.IsSuccess)
                     await ShowErrorAlert(response);
