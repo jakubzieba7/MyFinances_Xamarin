@@ -6,6 +6,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using System.Windows.Input;
 using Xamarin.Forms;
 using static Android.Icu.Util.LocaleData;
 
@@ -97,6 +98,82 @@ namespace MyFinances.ViewModels
 
             // This will push the ItemDetailPage onto the navigation stack
             await Shell.Current.GoToAsync($"{nameof(ItemDetailPage)}?{nameof(ItemDetailViewModel.ItemId)}={operation.Id}");
+        }
+
+        private Command firstPageCommand;
+
+        public ICommand FirstPageCommand
+        {
+            get
+            {
+                if (firstPageCommand == null)
+                {
+                    firstPageCommand = new Command(FirstPage);
+                }
+
+                return firstPageCommand;
+            }
+        }
+
+        private void FirstPage()
+        {
+        }
+
+        private Command previousPageCommand;
+
+        public ICommand PreviousPageCommand
+        {
+            get
+            {
+                if (previousPageCommand == null)
+                {
+                    previousPageCommand = new Command(PreviousPage);
+                }
+
+                return previousPageCommand;
+            }
+        }
+
+        private void PreviousPage()
+        {
+        }
+
+        private Command nextPageCommand;
+
+        public ICommand NextPageCommand
+        {
+            get
+            {
+                if (nextPageCommand == null)
+                {
+                    nextPageCommand = new Command(NextPage);
+                }
+
+                return nextPageCommand;
+            }
+        }
+
+        private void NextPage()
+        {
+        }
+
+        private Command lastPageCommand;
+
+        public ICommand LastPageCommand
+        {
+            get
+            {
+                if (lastPageCommand == null)
+                {
+                    lastPageCommand = new Command(LastPage);
+                }
+
+                return lastPageCommand;
+            }
+        }
+
+        private void LastPage()
+        {
         }
     }
 }
