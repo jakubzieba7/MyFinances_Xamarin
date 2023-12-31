@@ -52,5 +52,10 @@ namespace MyFinances.Models
         {
             await _context.UpdateAsync(operation);
         }
+
+        public async Task<int> OperationCount()
+        {
+            return await _context.Table<Operation>().CountAsync();
+        }
     }
 }

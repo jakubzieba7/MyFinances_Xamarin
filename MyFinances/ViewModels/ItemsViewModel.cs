@@ -1,26 +1,30 @@
 ﻿using MyFinances.Core;
 using MyFinances.Core.Dtos;
-using MyFinances.Core.Response;
 using MyFinances.Views;
 using System;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Xamarin.Forms;
-using static Android.Icu.Util.LocaleData;
 
 namespace MyFinances.ViewModels
 {
     public class ItemsViewModel : BaseViewModel
     {
-        PaginationFilter paginationFilter = new PaginationFilter();
-
+        private PaginationFilter _paginationFilter = new PaginationFilter();
+        public int TotalRowsCount { get; }
         public ObservableCollection<OperationDto> Operations { get; }
         public Command LoadItemsCommand { get; }
         public Command AddItemCommand { get; }
         public Command DeleteItemCommand { get; }
         public Command<OperationDto> ItemTapped { get; }
+
+        public Command FirstPageCommand { get; }
+
+        public Command PreviousPageCommand { get; }
+
+        public Command NextPageCommand { get; }
+
+        public Command LastPageCommand { get; }
 
         public ItemsViewModel()
         {
@@ -33,6 +37,48 @@ namespace MyFinances.ViewModels
             AddItemCommand = new Command(OnAddItem);
 
             DeleteItemCommand = new Command<OperationDto>(async (x) => await OnDeleteItem(x));
+
+            FirstPageCommand = new Command(async () => await OnFirstPage());
+            PreviousPageCommand = new Command(async () => await OnPreviousPage(), CanPreviousPage);
+            NextPageCommand = new Command(async () =>  await OnNextPage(), CanNextPage);
+            LastPageCommand = new Command(async () => await OnLastPage());
+        }
+
+        private bool CanNextPage() 
+        {
+            //var totalRecords = OperationSqliteService.UnitOfWork.OperationRepository.OperationCount().GetAwaiter().GetResult();
+            var totalRecords = 20;
+            var totalPages = ((double)totalRecords / (double)_paginationFilter.PageSize);
+            var roundedTotalPages = Convert.ToInt32(Math.Ceiling(totalPages));
+
+            return _paginationFilter.PageNumber < roundedTotalPages;
+        }
+
+        private bool CanPreviousPage()
+        {
+            return _paginationFilter.PageNumber > 1;
+        }
+
+        private async Task OnLastPage()
+        {
+            await ExecuteLoadItemsCommand();
+        }
+
+        private async Task OnNextPage()
+        {
+            _paginationFilter.PageNumber++;
+            await ExecuteLoadItemsCommand();
+        }
+
+        private async Task OnPreviousPage()
+        {
+            _paginationFilter.PageNumber--;
+            await ExecuteLoadItemsCommand();
+        }
+
+        private async Task OnFirstPage()
+        {
+            await ExecuteLoadItemsCommand();
         }
 
         private async Task OnDeleteItem(OperationDto operation)
@@ -42,7 +88,7 @@ namespace MyFinances.ViewModels
 
             var dialog = await Shell.Current.DisplayAlert("Usuwanie!", $"Czy na pewno chcesz usunąć operację {operation.Name}?", "Tak", "Nie");
 
-            if(!dialog)
+            if (!dialog)
                 return;
 
             var response = await OperationService.DeleteAsync(operation.Id);
@@ -59,17 +105,20 @@ namespace MyFinances.ViewModels
 
             try
             {
-                var response = await OperationService.GetAsync(paginationFilter);
+                var response = await OperationService.GetAsync(_paginationFilter);
 
                 if (!response.IsSuccess)
                     await ShowErrorAlert(response);
 
                 Operations.Clear();
-                
+
                 foreach (var item in response.Data)
                 {
                     Operations.Add(item);
                 }
+
+                PreviousPageCommand.ChangeCanExecute();
+                NextPageCommand.ChangeCanExecute();
             }
             catch (Exception ex)
             {
@@ -98,82 +147,6 @@ namespace MyFinances.ViewModels
 
             // This will push the ItemDetailPage onto the navigation stack
             await Shell.Current.GoToAsync($"{nameof(ItemDetailPage)}?{nameof(ItemDetailViewModel.ItemId)}={operation.Id}");
-        }
-
-        private Command firstPageCommand;
-
-        public ICommand FirstPageCommand
-        {
-            get
-            {
-                if (firstPageCommand == null)
-                {
-                    firstPageCommand = new Command(FirstPage);
-                }
-
-                return firstPageCommand;
-            }
-        }
-
-        private void FirstPage()
-        {
-        }
-
-        private Command previousPageCommand;
-
-        public ICommand PreviousPageCommand
-        {
-            get
-            {
-                if (previousPageCommand == null)
-                {
-                    previousPageCommand = new Command(PreviousPage);
-                }
-
-                return previousPageCommand;
-            }
-        }
-
-        private void PreviousPage()
-        {
-        }
-
-        private Command nextPageCommand;
-
-        public ICommand NextPageCommand
-        {
-            get
-            {
-                if (nextPageCommand == null)
-                {
-                    nextPageCommand = new Command(NextPage);
-                }
-
-                return nextPageCommand;
-            }
-        }
-
-        private void NextPage()
-        {
-        }
-
-        private Command lastPageCommand;
-
-        public ICommand LastPageCommand
-        {
-            get
-            {
-                if (lastPageCommand == null)
-                {
-                    lastPageCommand = new Command(LastPage);
-                }
-
-                return lastPageCommand;
-            }
-        }
-
-        private void LastPage()
-        {
         }
     }
 }
