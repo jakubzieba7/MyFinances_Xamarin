@@ -1,5 +1,6 @@
 ﻿using MyFinances.Core;
 using MyFinances.Core.Dtos;
+using MyFinances.Services;
 using MyFinances.Views;
 using System;
 using System.Collections.ObjectModel;
@@ -44,14 +45,25 @@ namespace MyFinances.ViewModels
             LastPageCommand = new Command(async () => await OnLastPage());
         }
 
-        private bool CanNextPage() 
+        private async Task<bool> CanNextPageAsync()
         {
-            //var totalRecords = OperationSqliteService.UnitOfWork.OperationRepository.OperationCount().GetAwaiter().GetResult();
-            var totalRecords = 20;
+            var totalRecords =await OperationSqliteService.UnitOfWork.OperationRepository.OperationCount();
+
             var totalPages = ((double)totalRecords / (double)_paginationFilter.PageSize);
             var roundedTotalPages = Convert.ToInt32(Math.Ceiling(totalPages));
 
             return _paginationFilter.PageNumber < roundedTotalPages;
+        }
+
+
+        private bool CanNextPage() 
+        {
+            var nextPageCaller = new Func<Task<bool>>(CanNextPageAsync);
+            var asyncResult = nextPageCaller.BeginInvoke(null, null);
+            asyncResult.AsyncWaitHandle.WaitOne();
+            var fooResult = nextPageCaller.EndInvoke(asyncResult);
+
+            return fooResult.Result;
         }
 
         private bool CanPreviousPage()
