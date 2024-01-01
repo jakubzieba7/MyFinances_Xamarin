@@ -61,9 +61,9 @@ namespace MyFinances.ViewModels
             var nextPageCaller = new Func<Task<bool>>(CanNextPageAsync);
             var asyncResult = nextPageCaller.BeginInvoke(null, null);
             asyncResult.AsyncWaitHandle.WaitOne();
-            var fooResult = nextPageCaller.EndInvoke(asyncResult);
+            var nextPageResult = nextPageCaller.EndInvoke(asyncResult);
 
-            return fooResult.Result;
+            return nextPageResult.Result;
         }
 
         private bool CanPreviousPage()
@@ -71,8 +71,25 @@ namespace MyFinances.ViewModels
             return _paginationFilter.PageNumber > 1;
         }
 
+        private async Task<int> LastPageAsync()
+        {
+            var totalRecords = await OperationSqliteService.UnitOfWork.OperationRepository.OperationCount();
+
+            var totalPages = ((double)totalRecords / (double)_paginationFilter.PageSize);
+            var roundedTotalPages = Convert.ToInt32(Math.Ceiling(totalPages));
+
+            return roundedTotalPages;
+        }
+
         private async Task OnLastPage()
         {
+            var lastPageCaller = new Func<Task<int>>(LastPageAsync);
+            var asyncResult = lastPageCaller.BeginInvoke(null, null);
+            asyncResult.AsyncWaitHandle.WaitOne();
+            var lastPageResult = lastPageCaller.EndInvoke(asyncResult);
+
+            _paginationFilter.PageNumber = lastPageResult.Result;
+
             await ExecuteLoadItemsCommand();
         }
 
@@ -90,6 +107,7 @@ namespace MyFinances.ViewModels
 
         private async Task OnFirstPage()
         {
+            _paginationFilter.PageNumber = 1;
             await ExecuteLoadItemsCommand();
         }
 
